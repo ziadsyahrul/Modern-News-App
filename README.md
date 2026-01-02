@@ -41,10 +41,12 @@ The app uses a **Single Source of Truth (SSOT)** pattern via the `RemoteMediator
 ---
 
 ## 📸 Screenshots
+
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/50435537-19f2-48a2-b89f-65794b99a24f" width="300" title="News List Screen">
+  <img src="https://github.com/user-attachments/assets/a7aaaa88-f7e7-4df9-b7ee-720cf9493e71" width="300" alt="News List" />
+  <img src="https://github.com/user-attachments/assets/28eec636-a8c8-470e-886a-891dbd5b58e0" width="300" alt="Detail News" />
   <br>
-  <em>Main News List with Offline Support</em>
+  <em>Main News List & Article Detail with Offline Support</em>
 </p>
 
 ## ⚙️ Setup Instructions
