@@ -1,5 +1,6 @@
-package com.ziad.modernnewsapp.presentation
+package com.ziad.modernnewsapp.presentation.news_list
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,10 +25,13 @@ import com.ziad.modernnewsapp.domain.model.Article
 @Composable
 fun NewsItem(
     article: Article,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
 ) {
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
         shape = MaterialTheme.shapes.medium
     ) {
         Row(

@@ -1,4 +1,4 @@
-package com.ziad.modernnewsapp.presentation
+package com.ziad.modernnewsapp.presentation.news_list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

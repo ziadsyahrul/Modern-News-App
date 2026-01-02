@@ -38,4 +38,8 @@ class NewsRepositoryImpl @Inject constructor(
         return null
     }
 
+    override suspend fun getArticleByUrl(url: String): Article? {
+        return newsDb.dao.getArticleByUrl(url)?.toArticle()
+    }
+
 }

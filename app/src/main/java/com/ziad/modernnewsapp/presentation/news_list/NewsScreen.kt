@@ -1,4 +1,4 @@
-package com.ziad.modernnewsapp.presentation
+package com.ziad.modernnewsapp.presentation.news_list
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,11 +11,13 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
+import com.ziad.modernnewsapp.domain.model.Article
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewsScreen(
-    viewModel: NewsViewModel
+    viewModel: NewsViewModel,
+    onArticleClick: (Article) -> Unit
 ) {
     val articles = viewModel.newsFlow.collectAsLazyPagingItems()
 
@@ -24,8 +26,9 @@ fun NewsScreen(
             TopAppBar(title = { Text("Modern News - Offline First") })
         }
     ) { padding ->
-        Box(modifier = Modifier.fillMaxSize().padding(padding)) {
-            // Loading Indikator Awal
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .padding(padding)) {
             if (articles.loadState.refresh is LoadState.Loading) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             } else {
@@ -41,14 +44,19 @@ fun NewsScreen(
                     ) { index ->
                         val item = articles[index]
                         if (item != null) {
-                            NewsItem(article = item)
+                            NewsItem(
+                                article = item,
+                                onClick = { onArticleClick(item) }
+                            )
                         }
                     }
 
                     // Loading Indikator saat Scroll ke bawah (Pagination)
                     if (articles.loadState.append is LoadState.Loading) {
                         item {
-                            Box(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+                            Box(modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)) {
                                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                             }
                         }
