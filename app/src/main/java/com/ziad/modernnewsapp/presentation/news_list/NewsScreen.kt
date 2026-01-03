@@ -12,6 +12,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
 import com.ziad.modernnewsapp.domain.model.Article
+import com.ziad.modernnewsapp.presentation.components.ShimmerNewsList
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -23,41 +24,72 @@ fun NewsScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Modern News - Offline First") })
+            TopAppBar(
+                title = { Text("Modern News") },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    titleContentColor = MaterialTheme.colorScheme.onSurface
+                )
+            )
         }
     ) { padding ->
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(padding)) {
-            if (articles.loadState.refresh is LoadState.Loading) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-            } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    contentPadding = PaddingValues(16.dp)
-                ) {
-                    items(
-                        count = articles.itemCount,
-                        key = articles.itemKey { it.url },
-                        contentType = articles.itemContentType { "article" }
-                    ) { index ->
-                        val item = articles[index]
-                        if (item != null) {
-                            NewsItem(
-                                article = item,
-                                onClick = { onArticleClick(item) }
-                            )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
+            // Logika pengecekan state Paging 3
+            when (val refreshState = articles.loadState.refresh) {
+
+                is LoadState.Loading -> {
+                    // MENGGANTI CircularProgressIndicator dengan Shimmer
+                    ShimmerNewsList()
+                }
+
+                is LoadState.Error -> {
+                    // Tampilan jika error saat refresh (misal: internet mati & db kosong)
+                    Column(
+                        modifier = Modifier.align(Alignment.Center),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(text = "Gagal memuat berita")
+                        Button(onClick = { articles.retry() }) {
+                            Text("Coba Lagi")
                         }
                     }
+                }
 
-                    // Loading Indikator saat Scroll ke bawah (Pagination)
-                    if (articles.loadState.append is LoadState.Loading) {
-                        item {
-                            Box(modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp)) {
-                                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                else -> {
+                    // Tampilan utama jika data berhasil dimuat
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        contentPadding = PaddingValues(16.dp)
+                    ) {
+                        items(
+                            count = articles.itemCount,
+                            key = articles.itemKey { it.url },
+                            contentType = articles.itemContentType { "article" }
+                        ) { index ->
+                            articles[index]?.let { item ->
+                                NewsItem(
+                                    article = item,
+                                    onClick = { onArticleClick(item) }
+                                )
+                            }
+                        }
+
+                        // Loading indikator di bawah (Pagination)
+                        if (articles.loadState.append is LoadState.Loading) {
+                            item {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator(strokeWidth = 2.dp)
+                                }
                             }
                         }
                     }
